@@ -1,8 +1,19 @@
-steps:
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 使用成熟的 SCP 插件
       - name: Copy Files
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -12,7 +23,6 @@ steps:
           source: "README.md"
           target: "/tmp/"
 
-      # 使用成熟的 SSH 插件执行命令
       - name: Run SSH Commands
         uses: appleboy/ssh-action@v1.0.3
         with:
