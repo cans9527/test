@@ -1,34 +1,38 @@
-name: Deploy to server
+name: Deploy to Server
 
-on: 
+on:
   push:
     branches:
       - main
-    workflow_dispatch:
+  workflow_dispatch:
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Chechout repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Run SSH/SCP Pipeline
-        uses: cans9527/test@main
+        uses: cans9527/test@main # Use your action's repo and version
         with:
+          # --- Connection Details (from Secrets) ---
           host: ${{ secrets.SSH_HOST }}
           user: ${{ secrets.SSH_USER }}
-          key:  ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
 
+          # --- Pipeline Commands ---
           first_ssh: |
-            echo "Sterting deplayment"
-            echo "Connected from a GitHub Action runner!"
+            echo "Starting deployment..."
+            echo "Connected from a GitHub Actions runner!"
 
           scp: |
-            README.md => /data/github-code/cans-test/
+            # Copy build artifacts or other files
+            # Format: 'local/path => remote/path'
+            README.md => /tmp/
 
-          lasr_ssh: |
+          last_ssh: |
             echo "File transfer complete."
-            echo "verifying file on remote server:"
-            ls -l /data/github-code/cans-test/README.md
-        
+            echo "Verifying file on remote server:"
+            ls -l /tmp/README.md
