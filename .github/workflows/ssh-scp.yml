@@ -1,0 +1,34 @@
+name: Deploy to server
+
+on: 
+  push:
+    branches:
+      - main
+    workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Chechout repository
+        uses: actions/checkout@v4
+
+      - name: Run SSH/SCP Pipeline
+        uses: cans9527/test@v2
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          user: ${{ secrets.SSH_USER }}
+          key:  ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+
+          first_ssh: |
+            echo "Sterting deplayment"
+            echo "Connected from a GitHub Action runner!"
+
+          scp: |
+            README.md => /data/github-code/cans-test/
+
+          lasr_ssh: |
+            echo "File transfer complete."
+            echo "verifying file on remote server:"
+            ls -l /data/github-code/cans-test/README.md
+        
