@@ -1,0 +1,20 @@
+name: 'SSH-SCP-SSH Pipeline'
+description: 'Efficiently execute SSH commands and SCP files in a single connection'
+inputs:
+  host:
+    required: true
+  user:
+    required: true
+  key:
+    required: true
+  known_hosts:
+    required: true
+  first_ssh:
+    required: false
+  scp:
+    required: false
+  last_ssh:
+    required: false
+runs:
+  using: 'docker'
+  image: 'Dockerfile' # 告诉 GitHub 使用仓库里的 Dockerfile 来运行
