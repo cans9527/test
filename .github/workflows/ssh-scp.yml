@@ -22,7 +22,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           source: "README.md"
-          target: "/tmp/"
+          target: "/data/github-code/cans-test/"
 
       - name: Run SSH Commands
         uses: appleboy/ssh-action@v1.0.3
@@ -33,4 +33,4 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             echo "Deployment successful!"
-            ls -l /tmp/README.md
+            ls -l /data/github-code/cans-test/README.md
