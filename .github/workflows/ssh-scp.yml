@@ -1,39 +1,24 @@
-name: Deploy to Server
-
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
+steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run SSH/SCP Pipeline
-        uses: kangketikonlen/ssh-pipeline@stable # Use your action's repo and version
+      # 使用成熟的 SCP 插件
+      - name: Copy Files
+        uses: appleboy/scp-action@v0.1.7
         with:
-          # --- Connection Details (from Secrets) ---
           host: ${{ secrets.SSH_HOST }}
-          user: ${{ secrets.SSH_USER }}
-          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+          source: "README.md"
+          target: "/tmp/"
 
-          # --- Pipeline Commands ---
-          first_ssh: |
-            echo "Starting deployment..."
-            echo "Connected from a GitHub Actions runner!"
-
-          scp: |
-            # Copy build artifacts or other files
-            # Format: 'local/path => remote/path'
-            README.md => /tmp/
-
-          last_ssh: |
-            echo "File transfer complete."
-            echo "Verifying file on remote server:"
+      # 使用成熟的 SSH 插件执行命令
+      - name: Run SSH Commands
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "Deployment successful!"
             ls -l /tmp/README.md
